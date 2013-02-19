@@ -16,10 +16,15 @@ namespace PongXNA
         Texture2D Texture;
         int m_sec_change_graphic = 120;
         int m_sec_passed = 0;
-        float sphere_size = 50;
+        Rectangle ClientBound;
+        private Rectangle BounceRectangle { get { return new Rectangle((int)(Position.X - 25), (int)(Position.Y - 25), 50, 50); } }
         SpriteBatch batch;
-        public Ball(Vector2 dir,Vector2 pos, Texture2D ball, SpriteBatch spritebatch)
+        float Speed;
+        public Ball(Vector2 dir,Vector2 pos, Texture2D ball, SpriteBatch spritebatch, float speed, Rectangle client)
         {
+            Speed = speed;
+            ClientBound = client;
+            dir.Normalize();
             Texture = ball;
             batch = spritebatch;
             Direction = dir;
@@ -47,7 +52,7 @@ namespace PongXNA
             Spherecol[1][4] = new Color(222, 4, 22);
             #endregion
 
-
+            
         }
         public void Update(GameTime gametime)
         {
@@ -58,10 +63,18 @@ namespace PongXNA
                 current_index++;
                 current_index %= 6;
             }
+            // Collision detection here:
+            // Ball
+                // Top & Bottom
+                if (BounceRectangle.Top < ClientBound.Top || BounceRectangle.Bottom > ClientBound.Bottom)
+                    Direction.Y *= -1;
+         
+
+            Position += (Direction * Speed);
         }
         public void Draw()
         {
-            batch.Draw(Texture, new Rectangle((int)(Position.X - 25),(int)(Position.Y - 25), 50, 50), Spherecol[(int)Player][current_index]);
+            batch.Draw(Texture, BounceRectangle , Spherecol[(int)Player][current_index]);
         }
     }
 }

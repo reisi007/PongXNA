@@ -24,10 +24,12 @@ namespace PongXNA
         List<Ball> Balls = new List<Ball>();
         Texture2D ball_img;
         Vector2 spawn_pos;
+        Random Rand;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            Rand = new Random();
         }
 
         /// <summary>
@@ -63,7 +65,6 @@ namespace PongXNA
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            Balls.Add(new Ball(new Vector2(-1, 1),spawn_pos, ball_img, spriteBatch));
             // TODO: use this.Content to load your game content here
         }
 
@@ -81,11 +82,19 @@ namespace PongXNA
         /// checking for collisions, gathering input, and playing audio.
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
+        int sec = 1000;
+        int next = 2000;
         protected override void Update(GameTime gameTime)
         {
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 this.Exit();
+            if (sec >= next)
+            {
+                Balls.Add(new Ball(new Vector2(Rand.Next(-5, 5), Rand.Next(-5, 5)), spawn_pos, ball_img, spriteBatch, 5, new Rectangle(0, 0, Window.ClientBounds.Width, Window.ClientBounds.Height)));
+                sec -= next;
+            }
+            sec += gameTime.ElapsedGameTime.Milliseconds;
             foreach (Ball b in Balls)
                 b.Update(gameTime);
             // TODO: Add your update logic here

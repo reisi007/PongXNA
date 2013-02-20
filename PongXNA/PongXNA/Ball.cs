@@ -10,18 +10,23 @@ namespace PongXNA
    public class Ball
     {
         Player Player;
+        public bool Collision;
         int current_index = 0;
-        Vector2 Position, Direction;
+        public Vector2 Position, Direction;
         Color[][] Spherecol = new Color[2][];
         Texture2D Texture;
         int m_sec_change_graphic = 120;
         int m_sec_passed = 0;
         Rectangle ClientBound;
+        Random rand;
         private Rectangle BounceRectangle { get { return new Rectangle((int)(Position.X - 25), (int)(Position.Y - 25), 50, 50); } }
         SpriteBatch batch;
         float Speed;
+        public int LifeTime = 15000;
+        public int Fluent = 600;
         public Ball(Vector2 dir,Vector2 pos, Texture2D ball, SpriteBatch spritebatch, float speed, Rectangle client)
         {
+            rand = new Random();
             Speed = speed;
             ClientBound = client;
             dir.Normalize();
@@ -68,9 +73,30 @@ namespace PongXNA
                 // Top & Bottom
                 if (BounceRectangle.Top < ClientBound.Top || BounceRectangle.Bottom > ClientBound.Bottom)
                     Direction.Y *= -1;
-         
-
+                // Left & Right
+                if (BounceRectangle.Left < ClientBound.Left)
+                {
+                    Direction.X *= -1;
+                    Player = PongXNA.Player.Red;
+                }
+                if (BounceRectangle.Right > ClientBound.Right)
+                {
+                    Direction.X *= -1;
+                    Player = PongXNA.Player.Blue;
+                }
+            
+            LifeTime -= gametime.ElapsedGameTime.Milliseconds;
+            Fluent -= gametime.ElapsedGameTime.Milliseconds;
+            if (Collision)
+            {
+                Direction *= -1;
+                Collision = false;
+                Fluent = 600;
+                Direction.X += rand.Next(-1, 1);
+                Direction.Normalize();
+            }
             Position += (Direction * Speed);
+           
         }
         public void Draw()
         {

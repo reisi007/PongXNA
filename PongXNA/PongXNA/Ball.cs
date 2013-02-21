@@ -10,7 +10,7 @@ namespace PongXNA
    public class Ball
     {
         Player Player;
-        public bool Collision;
+        public bool Collision = false;
         int current_index = 0;
         public Vector2 Position, Direction;
         Color[][] Spherecol = new Color[2][];
@@ -23,7 +23,8 @@ namespace PongXNA
         SpriteBatch batch;
         float Speed;
         public int LifeTime = 15000;
-        public int Fluent = 600;
+        public int Fluent = 33;
+       public Vector2 Reflection;
         public Ball(Vector2 dir,Vector2 pos, Texture2D ball, SpriteBatch spritebatch, float speed, Rectangle client)
         {
             rand = new Random();
@@ -70,34 +71,50 @@ namespace PongXNA
             }
             // Collision detection here:
             // Ball
-                // Top & Bottom
-                if (BounceRectangle.Top < ClientBound.Top || BounceRectangle.Bottom > ClientBound.Bottom)
-                    Direction.Y *= -1;
-                // Left & Right
-                if (BounceRectangle.Left < ClientBound.Left)
-                {
-                    Direction.X *= -1;
-                    Player = PongXNA.Player.Red;
-                }
-                if (BounceRectangle.Right > ClientBound.Right)
-                {
-                    Direction.X *= -1;
-                    Player = PongXNA.Player.Blue;
-                }
-            
+            // Top & Bottom
+            if (BounceRectangle.Top < ClientBound.Top)
+            {
+                Direction.Y *= -1;
+                Position.Y += 2;
+            }
+            if (BounceRectangle.Bottom > ClientBound.Bottom)
+            {
+                Direction.Y *= -1;
+                Position.Y -= 2;
+            }
+            // Left & Right
+            if (BounceRectangle.Left < ClientBound.Left)
+            {
+                Direction.X *= -1;
+                Player = PongXNA.Player.Red;
+                Position.X += 2;
+            }
+            if (BounceRectangle.Right > ClientBound.Right)
+            {
+                Direction.X *= -1;
+                Player = PongXNA.Player.Blue;
+                Position.X -= 3;
+            }
+
             LifeTime -= gametime.ElapsedGameTime.Milliseconds;
-            Fluent -= gametime.ElapsedGameTime.Milliseconds;
+            if (Fluent > 0)
+                Fluent -= gametime.ElapsedGameTime.Milliseconds;
             if (Collision)
             {
-                Direction *= -1;
-                Collision = false;
-                Fluent = 600;
-                Direction.X += rand.Next(-1, 1);
-                Direction.Normalize();
+                if (Fluent < 0)
+                {
+                    Collision = false;
+                    Direction = Reflection;
+                }
+                
+                    Fluent += 16;
+                
             }
+
             Position += (Direction * Speed);
-           
         }
+        
+           
         public void Draw()
         {
             batch.Draw(Texture, BounceRectangle , Spherecol[(int)Player][current_index]);

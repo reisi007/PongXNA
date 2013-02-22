@@ -23,8 +23,10 @@ namespace PongXNA
         SpriteBatch batch;
         float Speed;
         public int LifeTime = 15000;
-        public int Fluent = 33;
-       public Vector2 Reflection;
+        public Vector2 Reflection;
+        private bool Creation = true;
+       public int[] Score = new int[2];
+
         public Ball(Vector2 dir,Vector2 pos, Texture2D ball, SpriteBatch spritebatch, float speed, Rectangle client)
         {
             rand = new Random();
@@ -69,6 +71,28 @@ namespace PongXNA
                 current_index++;
                 current_index %= 6;
             }
+            
+            LifeTime -= gametime.ElapsedGameTime.Milliseconds;
+            // Normal collision
+            if (Collision && !Creation)
+            {
+                Collision = false;
+                Direction = Reflection;
+            }
+            // When there is a collision on creation;
+            if (Collision && Creation)
+            {
+                Position = new Vector2(rand.Next(50,ClientBound.Width -50),rand.Next(0,ClientBound.Height));
+                Collision = false;
+               // Direction = Reflection;
+            }
+            // No collision on creation
+            if (!Collision && Creation)
+            {
+                Creation = false;
+            }
+
+            Position += (Direction * Speed);
             // Collision detection here:
             // Ball
             // Top & Bottom
@@ -86,32 +110,17 @@ namespace PongXNA
             if (BounceRectangle.Left < ClientBound.Left)
             {
                 Direction.X *= -1;
+                Score[0]++;
                 Player = PongXNA.Player.Red;
                 Position.X += 2;
             }
             if (BounceRectangle.Right > ClientBound.Right)
             {
                 Direction.X *= -1;
+                Score[1]++;
                 Player = PongXNA.Player.Blue;
                 Position.X -= 3;
             }
-
-            LifeTime -= gametime.ElapsedGameTime.Milliseconds;
-            if (Fluent > 0)
-                Fluent -= gametime.ElapsedGameTime.Milliseconds;
-            if (Collision)
-            {
-                if (Fluent < 0)
-                {
-                    Collision = false;
-                    Direction = Reflection;
-                }
-                
-                    Fluent += 16;
-                
-            }
-
-            Position += (Direction * Speed);
         }
         
            

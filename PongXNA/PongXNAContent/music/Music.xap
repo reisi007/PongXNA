@@ -259,11 +259,13 @@ Sound Bank
     Windows File = Win\Sounds.xsb;
     Xbox Bank Path Edited = 0;
     Windows Bank Path Edited = 0;
+    Header Last Modified High = 0;
+    Header Last Modified Low = 0;
 
     Sound
     {
         Name = The Rush;
-        Volume = -1200;
+        Volume = 70;
         Pitch = 0;
         Priority = 0;
 
@@ -279,6 +281,7 @@ Sound Bank
 
             Play Wave Event
             {
+                Loop Count = 255;
                 Break Loop = 0;
                 Use Speaker Position = 0;
                 Use Center Speaker = 1;

@@ -22,9 +22,9 @@ namespace PongXNA
         private Rectangle BounceRectangle { get { return new Rectangle((int)(Position.X - 25), (int)(Position.Y - 25), 50, 50); } }
         SpriteBatch batch;
         float Speed;
-        public int LifeTime = 15000;
+        public int LifeTime = 10000;
         public Vector2 Reflection;
-        private bool Creation = true;
+        public bool Creation = true;
        public int[] Score = new int[2];
 
         public Ball(Vector2 dir,Vector2 pos, Texture2D ball, SpriteBatch spritebatch, float speed, Rectangle client)

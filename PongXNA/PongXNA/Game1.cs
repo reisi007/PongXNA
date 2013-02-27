@@ -116,6 +116,11 @@ namespace PongXNA
                  p2s += Balls[i].Score[(int)Player.Red];
                  Balls[i].Score[(int)Player.Blue] = 0;
                  Balls[i].Score[(int)Player.Red] = 0;
+                 if (Balls[i].Position.X - 50 > Window.ClientBounds.Width || Balls[i].Position.X < -50 || Balls[i].Position.Y < -50 || Balls[i].Position.Y -50 > Window.ClientBounds.Height)
+                 {
+                     Balls.RemoveAt(i);
+                     i--;
+                 }
              }
 
              if (sec >= next)
@@ -138,7 +143,7 @@ namespace PongXNA
              {
                  for (int y = 0; y < Balls.Count; y++)
                  {
-                     if (y != i)
+                     if (y != i && !Balls[i].Creation && !Balls[y].Creation)
                      {
                          tmp = (float)(Math.Pow(Balls[i].Position.X - Balls[y].Position.X, 2) + Math.Pow(Balls[i].Position.Y - Balls[y].Position.Y, 2));
                          if (tmp <= (d * d))
